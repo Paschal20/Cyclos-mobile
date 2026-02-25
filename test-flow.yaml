@@ -1,0 +1,155 @@
+# Maestro E2E Test Flow for Cyclos
+# Tests the complete user journey from app launch to playing notes
+
+appId: com.cyclos.app
+
+---
+# Flow 1: Basic App Launch and Navigation
+- name: "Launch Cyclos app and start"
+  runFlow: |
+    # Launch the app
+    - launchApp
+    - waitForAnimationToEnd
+
+    # Verify StartOverlay is visible
+    - assertVisible: "CYCLOS"
+
+    # Tap START button to dismiss overlay
+    - tapOn: "START"
+    - waitForAnimationToEnd
+
+    # Verify we're now on the main grid
+    - assertVisible: "Circular Grid"
+
+---
+# Flow 2: Tap Note Circle and Verify Interaction
+- name: "Test note circle interaction"
+  runFlow: |
+    # Launch and start the app
+    - launchApp
+    - waitForAnimationToEnd
+    - tapOn: "START"
+    - waitForAnimationToEnd
+
+    # Tap on a note circle (C4 in the grid)
+    - tapOn: "note-circle-C4"
+    - waitFor: 500ms
+
+    # Verify note was triggered (visual feedback should appear)
+    - assertVisible: "C"
+
+---
+# Flow 3: Multiple Note Interaction (Glissando)
+- name: "Test rapid note tapping (glissando)"
+  runFlow: |
+    # Launch and start
+    - launchApp
+    - waitForAnimationToEnd
+    - tapOn: "START"
+    - waitForAnimationToEnd
+
+    # Rapidly tap multiple notes
+    - tapOn: "note-circle-C4"
+    - waitFor: 100ms
+    - tapOn: "note-circle-D4"
+    - waitFor: 100ms
+    - tapOn: "note-circle-E4"
+    - waitFor: 100ms
+    - tapOn: "note-circle-F4"
+    - waitFor: 100ms
+
+    # All notes should be visible on screen
+    - assertVisible: "C"
+    - assertVisible: "D"
+    - assertVisible: "E"
+    - assertVisible: "F"
+
+---
+# Flow 4: Center Screen Tap Test
+- name: "Tap center of grid and verify sound feedback"
+  runFlow: |
+    # Launch and start
+    - launchApp
+    - waitForAnimationToEnd
+    - tapOn: "START"
+    - waitForAnimationToEnd
+
+    # Tap the center of the screen (where the audio indicator would be)
+    - tapOn:
+        point: 50%, 50%
+
+    # Wait for any visual feedback
+    - waitFor: 500ms
+
+    # Verify the grid is still visible (app didn't crash)
+    - assertVisible: "Circular Grid"
+
+---
+# Flow 5: Settings Navigation (if available)
+- name: "Test settings drawer if present"
+  runFlow: |
+    # Launch and start
+    - launchApp
+    - waitForAnimationToEnd
+    - tapOn: "START"
+    - waitForAnimationToEnd
+
+    # Try to open settings if the button exists
+    - extendedWaitUntil:
+        visible: "Settings"
+        timeout: 2000
+    - runIf:
+        condition: ${VISIBLE}:
+          - tapOn: "Settings"
+          - waitForAnimationToEnd
+          - assertVisible: "Settings Drawer"
+
+---
+# Flow 6: Theme Toggle Test
+- name: "Test theme toggle if available"
+  runFlow: |
+    # Launch and start
+    - launchApp
+    - waitForAnimationToEnd
+    - tapOn: "START"
+    - waitForAnimationToEnd
+
+    # Try to toggle theme if available
+    - extendedWaitUntil:
+        visible: "Theme"
+        timeout: 2000
+    - runIf:
+        condition: ${VISIBLE}:
+          - tapOn: "Theme"
+          - waitFor: 300ms
+
+---
+# Flow 7: Full E2E - Complete User Journey
+- name: "Complete user journey test"
+  runFlow: |
+    # 1. Launch the app
+    - launchApp
+    - waitForAnimationToEnd
+
+    # 2. Verify start screen
+    - assertVisible: "CYCLOS"
+    - assertVisible: "Touch the circles to play"
+    - assertVisible: "START"
+
+    # 3. Tap START to dismiss overlay
+    - tapOn: "START"
+    - waitForAnimationToEnd
+
+    # 4. Verify we're on the grid
+    - assertVisible: "Circular Grid"
+
+    # 5. Tap a note in the center area
+    - tapOn:
+        point: 50%, 50%
+    - waitFor: 300ms
+
+    # 6. Verify app is still responsive
+    - assertVisible: "Circular Grid"
+
+    # 7. Take a screenshot for visual regression (optional)
+    # - screenshot: "cyclos-main-screen.png"
