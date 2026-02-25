@@ -3099,7 +3099,6 @@ async function detectAudioRoute(): Promise<AudioRouteType> {
   }
   
   if (Platform.OS === 'android') {
-    console.log('[useLatency] Android route detection not implemented - returning unknown');
     return 'unknown';
   }
   

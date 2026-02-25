@@ -22,7 +22,13 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "permissions": ["VIBRATE"]
+      "permissions": [
+        "VIBRATE",
+        "WAKE_LOCK",
+        "VIBRATE",
+        "WAKE_LOCK"
+      ],
+      "package": "com.anonymous.cyclosmobile"
     },
     "web": {
       "favicon": "./assets/favicon.png"
